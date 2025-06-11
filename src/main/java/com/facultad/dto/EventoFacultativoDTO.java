@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 public class EventoFacultativoDTO {
 
-    // Getters y Setters
+//aqui basicamente se declaran los atributos del evento(se tienen que poner de la misma forma que en el model
     private Integer id;
 
     @NotNull(message = "El nombre del evento es obligatorio")

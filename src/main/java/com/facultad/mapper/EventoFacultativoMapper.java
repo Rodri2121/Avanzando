@@ -6,6 +6,8 @@ import com.facultad.model.EventoFacultativo;
 public class EventoFacultativoMapper {
 
     public static EventoFacultativoDTO toDTO(EventoFacultativo evento) {
+
+
         return new EventoFacultativoDTO(
                 evento.getId(),
                 evento.getNombreEvento(),

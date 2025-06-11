@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Data
 public class ProfesorDTO {
-
+//datos puestos de igual manera que en el model
     private Integer id;
 
     @NotBlank(message = "El nombre no puede estar vacío")

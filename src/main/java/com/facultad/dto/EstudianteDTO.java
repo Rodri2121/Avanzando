@@ -12,10 +12,10 @@ public class EstudianteDTO {
     private Integer id;
 
     @NotBlank(message = "El nombre no puede estar vacío")
-    @Pattern(regexp = ".*\\S.*", message = "El nombre no puede contener solo espacios")
+    @Pattern(regexp = ".*\\S.*", message = "El nombre no puede contener solo espacios") //esto lo que hace es que valida que al poner el nombre no quede vacio o con espacios
     private String nombre;
-
-    public EstudianteDTO(){}
+    private Long eventoFacultativoId;
+    public EstudianteDTO(){}//constructor vacio necesario para solo llamar al estudiante
 
     public EstudianteDTO(Integer id, String nombre){
         this.id = id;

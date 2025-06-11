@@ -19,3 +19,4 @@ public interface IServiceEstudiante {
 
     EstudianteDTO saves(@Valid EstudianteDTO estudianteDTO);
 }
+//DTOs → Repositorios → Mappers → Servicios → Controllers en este caso para el findwith
