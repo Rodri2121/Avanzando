@@ -1,6 +1,7 @@
 package com.facultad.service.evento;
 
 import com.facultad.dto.EstudianteConEventosDTO;
+import com.facultad.dto.EstudianteDTO;
 import com.facultad.dto.EventoFacultativoDTO;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface IServiceEvento {
     EventoFacultativoDTO findOne(Integer id);
     EventoFacultativoDTO saveEventoConProfesor(Integer profesorId, EventoFacultativoDTO eventoDTO);
     EstudianteConEventosDTO agregarEstudianteAEvento(Integer idEvento, Integer idEstudiante);
+    // Nuevo método para obtener estudiantes inscritos
+    List<EstudianteDTO> obtenerEstudiantesInscritos(Integer idEvento);
 }

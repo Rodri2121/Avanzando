@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -27,6 +28,8 @@ public class EventoFacultativoDTO {
     @NotNull(message = "El ID del profesor es obligatorio")
     private Integer profesorId;
 
+    private List<EstudianteDTO> estudiantes;
+
 
 
     // Constructor vacío
@@ -34,13 +37,19 @@ public class EventoFacultativoDTO {
     }
 
 
-    public EventoFacultativoDTO(Integer id, String nombreEvento, LocalDate fechaInicio, LocalDate fechaFin, Integer profesorId) {
+    public EventoFacultativoDTO(Integer id, String nombreEvento, LocalDate fechaInicio, LocalDate fechaFin, Integer profesorId, List<EstudianteDTO> estudiantes) {
         this.id = id;
         this.nombreEvento = nombreEvento;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.profesorId = profesorId;
+        this.estudiantes = estudiantes; // añadi una lista de estudiantes que se mapearan en el postman
 
+
+    }
+    public EventoFacultativoDTO(Integer id, String nombreEvento, LocalDate fechaInicio,
+                                LocalDate fechaFin, Integer profesorId) {
+        this(id, nombreEvento, fechaInicio, fechaFin, profesorId, null); //constructor generico inicial que permite lista null de estudiantes
     }
 
 }

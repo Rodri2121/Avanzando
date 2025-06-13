@@ -1,6 +1,7 @@
 package com.facultad.service.evento;
 
 import com.facultad.dto.EstudianteConEventosDTO;
+import com.facultad.dto.EstudianteDTO;
 import com.facultad.dto.EventoFacultativoDTO;
 import com.facultad.mapper.EstudianteMapper;
 import com.facultad.mapper.EventoFacultativoMapper;
@@ -144,5 +145,22 @@ public class ServiceEvento implements IServiceEvento {
 
         // 5. Retornar el DTO del estudiante con su evento
         return estudianteMapper.toConEventosDTO(estudianteActualizado);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EstudianteDTO> obtenerEstudiantesInscritos(Integer idEvento) {
+        // Verificar que el evento existe
+        if (!eventoFacultativoRepository.existsById(idEvento)) {
+            throw new IllegalStateException("Evento no encontrado con ID: " + idEvento);
+        }
+
+        // Obtener estudiantes usando el método del repositorio
+        List<Estudiante> estudiantes = estudianteRepository.findByEventoFacultativoId(idEvento);
+
+        // Convertir a DTOs usando el mapper ya inyectado
+        return estudiantes.stream()
+                .map(EstudianteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

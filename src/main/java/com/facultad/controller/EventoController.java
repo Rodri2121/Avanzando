@@ -1,6 +1,7 @@
 package com.facultad.controller;
 
 import com.facultad.dto.EstudianteConEventosDTO;
+import com.facultad.dto.EstudianteDTO;
 import com.facultad.dto.EventoFacultativoDTO;
 import com.facultad.service.evento.IServiceEvento;
 import jakarta.validation.Valid;
@@ -74,4 +75,12 @@ public class EventoController {
         EstudianteConEventosDTO respuesta = serviceEvento.agregarEstudianteAEvento(idEvento, idEstudiante);
         return ResponseEntity.ok(respuesta);
     }
+    @GetMapping("/{idEvento}/estudiantes")
+    public ResponseEntity<List<EstudianteDTO>> getEstudiantesInscritos( //agregue esto que es para que aparezcan los estudiantes solo con el id del evento
+            @PathVariable Integer idEvento) {
+
+        List<EstudianteDTO> estudiantes = serviceEvento.obtenerEstudiantesInscritos(idEvento);
+        return ResponseEntity.ok(estudiantes);
+    }
+
 }
