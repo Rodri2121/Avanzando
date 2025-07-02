@@ -44,7 +44,7 @@ public class EstudianteController {
         return serviceEstudiante.findOneWithEvents(id);
     }
 
-    @GetMapping("/{id}")//muestra el estudiante si mas
+    @GetMapping("/{id}")//muestra el estudiante sin mas
     public EstudianteDTO getEstudianteById(@PathVariable Integer id){
         return serviceEstudiante.findOne(id);
     }

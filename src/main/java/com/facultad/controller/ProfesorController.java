@@ -25,6 +25,11 @@ public class ProfesorController {
         return serviceProfesor.findAllWithEvents();
     }
 
+    @GetMapping("/profe/{id}")
+    public ProfesorConEventosDTO EncontrarEvento(@PathVariable Integer id){
+        return serviceProfesor.findOneWithEvents(id);
+    }
+
 
 
     @GetMapping("/{id}")
