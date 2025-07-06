@@ -39,17 +39,15 @@ public class ServiceEstudiante implements IServiceEstudiante{
     @Override
     @Transactional
     public EstudianteDTO save(@Valid EstudianteCreateDTO dto) {
-        // Validar y obtener el evento
-        EventoFacultativo evento = eventoFacultativoRepository.findById(dto.getEventoFacultativoId())
-                .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado con ID: " + dto.getEventoFacultativoId()));
-
-        // Crear entidad
         Estudiante estudiante = EstudianteMapper.toEntity(dto);
-        estudiante.setEventoFacultativo(evento);
-        // No establecer justificación aunque venga en el DTO
-        estudiante.setJustificaciones(null);
 
-        // Guardar y retornar DTO
+        if (dto.getEventoFacultativoId() != null) {
+            EventoFacultativo evento = eventoFacultativoRepository.findById(dto.getEventoFacultativoId())
+                    .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado con ID: " + dto.getEventoFacultativoId()));
+            estudiante.getEventosFacultativos().add(evento);
+        }
+
+        estudiante.setJustificaciones(null);
         Estudiante saved = estudianteRepository.save(estudiante);
         return EstudianteMapper.toDTO(saved);
     }
@@ -63,21 +61,32 @@ public class ServiceEstudiante implements IServiceEstudiante{
 
     @Override
     public EstudianteDTO update(@Valid EstudianteDTO estudianteDTO) {
-        if(!estudianteRepository.existsById(estudianteDTO.getId())){
+        if (!estudianteRepository.existsById(estudianteDTO.getId())) {
             throw new IllegalArgumentException("El estudiante con id: " + estudianteDTO.getId() + " no existe.");
         }
 
-        // Obtener el estudiante existente
         Estudiante estudianteExistente = estudianteRepository.findById(estudianteDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
 
-        // Actualizar solo los campos permitidos (nombre en este caso)
+        // Actualizar nombre
         estudianteExistente.setNombre(estudianteDTO.getNombre());
 
-        // Guardar los cambios
-        Estudiante updatedEstudiante = estudianteRepository.save(estudianteExistente);
-        return EstudianteMapper.toDTO(updatedEstudiante);
+        // Si se pasa una lista de IDs de eventos, agregarlos
+        if (estudianteDTO.getEventosFacultativosIds() != null) {
+            for (Integer idEvento : estudianteDTO.getEventosFacultativosIds()) {
+                EventoFacultativo evento = eventoFacultativoRepository.findById(idEvento)
+                        .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado con ID: " + idEvento));
+
+                if (!estudianteExistente.getEventosFacultativos().contains(evento)) {
+                    estudianteExistente.getEventosFacultativos().add(evento);
+                }
+            }
+        }
+
+        Estudiante actualizado = estudianteRepository.save(estudianteExistente);
+        return EstudianteMapper.toDTO(actualizado);
     }
+
 
     @Override
     public void delete(Integer id) {

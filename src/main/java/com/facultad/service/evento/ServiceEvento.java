@@ -133,18 +133,17 @@ public class ServiceEvento implements IServiceEvento {
         Estudiante estudiante = estudianteRepository.findById(idEstudiante)
                 .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado con ID: " + idEstudiante));
 
-        // 3. Verificar si ya está asociado
-        if(estudiante.getEventoFacultativo() != null &&
-                estudiante.getEventoFacultativo().getId().equals(idEvento)) {
+        // 3. Verificar si ya está asociado al evento
+        if (estudiante.getEventosFacultativos().contains(evento)) {
             throw new IllegalStateException("El estudiante ya está registrado en este evento");
         }
 
-        // 4. Actualizar la relación
-        estudiante.setEventoFacultativo(evento);
-        Estudiante estudianteActualizado = estudianteRepository.save(estudiante);
+        // 4. Asociar el evento al estudiante
+        estudiante.getEventosFacultativos().add(evento);
+        estudianteRepository.save(estudiante);
 
-        // 5. Retornar el DTO del estudiante con su evento
-        return estudianteMapper.toConEventosDTO(estudianteActualizado);
+        // 5. Retornar el DTO del estudiante con su lista de eventos
+        return estudianteMapper.toConEventosDTO(estudiante);
     }
 
     @Override

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,8 +33,8 @@ public class EventoFacultativo {
     @JoinColumn(name = "profesor_id", nullable = false)
     private Profesor profesor;
 
-    @OneToMany(mappedBy = "eventoFacultativo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Estudiante> estudiantes;
+    @ManyToMany(mappedBy = "eventosFacultativos")
+    private List<Estudiante> estudiantes = new ArrayList<>();
 
 
 
