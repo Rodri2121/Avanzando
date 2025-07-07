@@ -33,7 +33,12 @@ public class EventoFacultativo {
     @JoinColumn(name = "profesor_id", nullable = false)
     private Profesor profesor;
 
-    @ManyToMany(mappedBy = "eventosFacultativos")
+    @ManyToMany
+    @JoinTable(
+            name = "evento_estudiante",
+            joinColumns = @JoinColumn(name = "evento_id"),
+            inverseJoinColumns = @JoinColumn(name = "estudiante_id")
+    )
     private List<Estudiante> estudiantes = new ArrayList<>();
 
 

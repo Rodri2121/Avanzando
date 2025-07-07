@@ -52,22 +52,22 @@ public class ServiceEvento implements IServiceEvento {
     }
     @Override
     public EventoFacultativoDTO saveEventoConProfesor(Integer profesorId, EventoFacultativoDTO eventoDTO) {
-        // Buscar el profesor por ID
         Profesor profesor = profesorRepository.findById(profesorId)
-                .orElseThrow(() -> new IllegalArgumentException("Profesor no encontrado con ID: " + profesorId));
+                .orElseThrow(() -> new IllegalArgumentException("Profesor no encontrado"));
 
-        // Convertir el DTO a una entidad
         EventoFacultativo evento = EventoFacultativoMapper.toEntity(eventoDTO);
-
-        // Asociar el profesor al evento
         evento.setProfesor(profesor);
 
-        // Guardar el evento
-        EventoFacultativo savedEvento = eventoFacultativoRepository.save(evento);
+        //  Asociar estudiantes aquí
+        if (eventoDTO.getEstudiantesIds() != null && !eventoDTO.getEstudiantesIds().isEmpty()) {
+            List<Estudiante> estudiantes = estudianteRepository.findAllById(eventoDTO.getEstudiantesIds());
+            evento.setEstudiantes(estudiantes);
+        }
 
-        // Convertir el registro guardado a un DTO
-        return EventoFacultativoMapper.toDTO(savedEvento);
+        EventoFacultativo guardado = eventoFacultativoRepository.save(evento);
+        return EventoFacultativoMapper.toDTO(guardado);
     }
+
 
     @Override
     public void delete(Integer id) {
