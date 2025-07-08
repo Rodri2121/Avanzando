@@ -14,6 +14,7 @@ import com.facultad.repository.ProfesorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,32 +86,37 @@ public class ServiceEvento implements IServiceEvento {
         EventoFacultativo eventoExistente = eventoFacultativoRepository.findById(eventoDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado con ID: " + eventoDTO.getId()));
 
-        // 2. Actualizar campos del DTO (mapeo manual para coincidir con tus nombres de campos)
-        eventoExistente.setNombreEvento(eventoDTO.getNombreEvento()); // Nota: nombreEvento vs nombre
-
-        // Manejo de fechas (asumiendo que tu entidad tiene LocalDate)
+        // 2. Actualizar campos básicos
+        eventoExistente.setNombreEvento(eventoDTO.getNombreEvento());
         eventoExistente.setFechaInicio(eventoDTO.getFechaInicio());
         eventoExistente.setFechaFin(eventoDTO.getFechaFin());
 
-        // 3. Manejo seguro del profesor
+        // 3. Manejar actualización del profesor si se proporciona
         if (eventoDTO.getProfesorId() != null) {
             Profesor profesor = profesorRepository.findById(eventoDTO.getProfesorId())
                     .orElseThrow(() -> new IllegalArgumentException("Profesor no encontrado con ID: " + eventoDTO.getProfesorId()));
             eventoExistente.setProfesor(profesor);
         }
-        // Si profesorId es null, mantiene el profesor actual
 
-        // 4. Guardar cambios
+        // 4. Actualizar estudiantes asignados correctamente, limpiando ambos lados de la relación
+        // Limpiar la relación actual de ambos lados
+        for (Estudiante estudiante : new ArrayList<>(eventoExistente.getEstudiantes())) {
+            estudiante.getEventosFacultativos().remove(eventoExistente); // limpia lado inverso
+        }
+        eventoExistente.getEstudiantes().clear(); // limpia este lado
+
+        // Agregar los nuevos estudiantes (si vienen)
+        if (eventoDTO.getEstudiantesIds() != null && !eventoDTO.getEstudiantesIds().isEmpty()) {
+            List<Estudiante> nuevosEstudiantes = estudianteRepository.findAllById(eventoDTO.getEstudiantesIds());
+            for (Estudiante estudiante : nuevosEstudiantes) {
+                eventoExistente.getEstudiantes().add(estudiante);
+                estudiante.getEventosFacultativos().add(eventoExistente); // sincronizar lado inverso
+            }
+        }
+
+        // 5. Guardar y devolver el DTO actualizado
         EventoFacultativo updatedEvento = eventoFacultativoRepository.save(eventoExistente);
-
-        // 5. Convertir a DTO (ajustado a tu estructura)
-        return new EventoFacultativoDTO(
-                updatedEvento.getId(),
-                updatedEvento.getNombreEvento(), // o getNombreEvento() según tu entidad
-                updatedEvento.getFechaInicio(),
-                updatedEvento.getFechaFin(),
-                updatedEvento.getProfesor() != null ? updatedEvento.getProfesor().getId() : null
-        );
+        return EventoFacultativoMapper.toDTO(updatedEvento);
     }
 
     @Override
